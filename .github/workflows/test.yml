@@ -1,0 +1,26 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Running tests
+        run: |
+          mkdir bin
+          mkdir lib
+          curl https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.5.2/junit-platform-console-standalone-1.5.2.jar -o lib/junit.jar
+          curl https://repo1.maven.org/maven2/org/seleniumhq/selenium/selenium-java/3.141.59/selenium-java-3.141.59.jar -o lib/selenium.jar
+          curl https://repo1.maven.org/maven2/info/cukes/cucumber-core/1.2.5/cucumber-core-1.2.5.jar -o lib/core.jar
+          curl https://repo1.maven.org/maven2/info/cukes/cucumber-java/1.2.5/cucumber-java-1.2.5.jar -o lib/java.jar
+          curl https://repo1.maven.org/maven2/info/cukes/cucumber-junit/1.2.5/cucumber-junit-1.2.5.jar -o lib/cumjunit.jar
+          curl https://repo1.maven.org/maven2/info/cukes/cucumber-jvm-deps/1.0.5/cucumber-jvm-deps-1.0.5.jar -o lib/deps.jar
+          curl https://repo1.maven.org/maven2/net/masterthought/cucumber-reporting/4.11.2/cucumber-reporting-4.11.2.jar -o lib/report.jar
+          curl https://repo1.maven.org/maven2/info/cukes/gherkin/2.12.2/gherkin-2.12.2.jar -o lib/gherkin.jar
+          curl https://repo1.maven.org/maven2/org/seleniumhq/selenium/selenium-chrome-driver/3.141.59/selenium-chrome-driver-3.141.59.jar -o lib/driver.jar
+          javac -d bin -cp lib/junit.jar:lib/selenium.jar:lib/core.jar:lib/java.jar:lib/cumjunit.jar:lib/deps.jar:lib/report.jar:lib/gherkin.jar:lib/driver.jar src/test/java/steps/*
+          java -jar lib/junit.jar --class-path bin --scan-class-path
